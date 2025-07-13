@@ -1,5 +1,6 @@
+# 本项目仅提供QNAP威联通NAS相关安装文件，Lucky二进制源文件均来自[gdy666/lucky](https://github.com/gdy666/lucky)
+
 # Lucky(万吉)
- 
 
  ## 注意：源码公布到1.4.10版本，后续暂无继续开源计划。
 
