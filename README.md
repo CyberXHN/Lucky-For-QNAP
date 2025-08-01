@@ -1,4 +1,7 @@
 # Lucky for QNAP NAS
+
+# 本软件可能会被威联通MalwareRemover扫描为病毒软件导致无法运行，若您对此有所顾虑，请使用[Docker版Lucky](https://hub.docker.com/r/gdy666/lucky)
+
 ## 安装注意
  * Lucky项目地址：https://github.com/gdy666/lucky
  * 安装过程会提示无数字签名，若您对此有所顾虑，请使用[Docker版Lucky](https://hub.docker.com/r/gdy666/lucky)
