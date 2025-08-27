@@ -16,3 +16,10 @@
  1. 使用App Center手动安装。（无法安装需在APP Center中启用未签名应用安装）
  2. 访问URL：http://[NAS-IP]:16601/
  3. 默认用户名：666 默认密码：666
+
+ ## Lucky版与Wanji版区别
+ 1. Lucky 轻量版 ：<br>
+    包含常用模块：如动态域名、Web 服务、端口转发、STUN 穿透、计划任务、证书管理（ACME）、网络唤醒、FTP 服务、WebDAV 服务等。<br>
+    去除了一些不常用的功能，使 Lucky 变得更加轻量，非常适合在资源有限的威联通NAS上运行。
+ 2. 万吉（Wanji）全能版：<br>
+    在Lucky基础功能上增加了 grpc反向代理支持，CorazaWAF, rclone，filebrowser，DLNA服务，CloudFlare tunnel 客户端等功能。
