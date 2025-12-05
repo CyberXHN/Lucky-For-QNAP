@@ -1,0 +1,93 @@
+name: Get-AMD64-Docker-Images-Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '请填写Lucky版本'
+        required: true
+        default: '2.20.0'
+
+jobs:
+  pull_and_package:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Clone QDK repository
+        run: |
+          git clone https://github.com/qnap-dev/QDK.git /tmp/QDK
+      
+      - name: Install QDK to Ubuntu
+        run: |
+          cd /tmp/QDK
+          sudo ./InstallToUbuntu.sh install
+          echo "/usr/share/QDK/bin" >> $GITHUB_PATH
+      
+      - name: Build Lucky QPKG
+        run: |
+          echo "Preparing build environment..."
+          
+          cp -r Lucky /tmp/Lucky-Build
+          cd /tmp/Lucky-Build
+          wget -P x86_64 -O lucky https://release.66666.host/v2.20.2/2.20.2_lucky/lucky_2.20.2_Linux_x86_64.tar.gz
+          wget -P arm_64 -O lucky https://release.66666.host/v2.20.2/2.20.2_lucky/lucky_2.20.2_Linux_arm_64.tar.gz
+          qbuild
+          
+          cp -r build $GITHUB_WORKSPACE/Lucky-build
+          echo "Build completed successfully"
+          echo "Build artifacts:"
+          ls -la $GITHUB_WORKSPACE/Lucky-build/
+
+      - name: Build Lucky.Wanji QPKG
+        run: |
+          echo "Preparing build environment..."
+          
+          # 拷贝 Lucky 文件夹到临时目录
+          cp -r Lucky /tmp/Lucky-Build
+          cd /tmp/Lucky-Build
+          wget -P x86_64 -O lucky https://release.66666.host/v2.20.2/2.20.2_lucky/lucky_2.20.2_Linux_x86_64.tar.gz
+          wget -P arm_64 -O lucky https://release.66666.host/v2.20.2/2.20.2_lucky/lucky_2.20.2_Linux_arm_64.tar.gz
+          echo "Running qbuild..."
+          # 执行 qbuild 命令
+          qbuild
+          
+          # 将 build 文件夹拷贝到 workspace，方便上传
+          cp -r build $GITHUB_WORKSPACE/Lucky-build
+          ls -la $GITHUB_WORKSPACE/Lucky-build/
+
+      - name: Create and push tag
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git tag -a "v${{ github.event.inputs.version }}" -m "Release v${{ github.event.inputs.version }}"
+          git push origin "v${{ github.event.inputs.version }}"
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          name: Lucky QPKG v${{ github.event.inputs.version }}
+          files: Lucky-build/*
+          body: |
+            Lucky QPKG ${{ github.event.inputs.version }}
+            
+            Built with QDK (QNAP Development Kit)
+            
+            ## Build Information
+            - Version: ${{ github.event.inputs.version }}
+            - Commit: ${{ github.sha }}
+            - Build Date: ${{ github.event.repository.updated_at }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload artifacts (manual runs)
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lucky-QPKG-${{ github.run_number }}
+          path: Lucky-build/*
+          retention-days: 30
