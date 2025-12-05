@@ -1,11 +1,11 @@
 # Lucky for QNAP NAS
-
-# 本软件可能会被威联通MalwareRemover扫描为病毒软件导致无法运行，若您对此有所顾虑，请使用[Docker版Lucky](https://hub.docker.com/r/gdy666/lucky)
+ * Lucky项目地址：https://github.com/gdy666/lucky
+ * 2.20大版本开始，**Releases**中的版本全程由**Github Action**构建，二进制文件全部源自官网
+ * 本软件可能会被威联通**MalwareRemover**误报为病毒软件导致无法运行，安装运行前需自行禁用**MalwareRemover**
 
 ## 安装注意
- * Lucky项目地址：https://github.com/gdy666/lucky
+
  * 安装过程会提示无数字签名，若您对此有所顾虑，请使用[Docker版Lucky](https://hub.docker.com/r/gdy666/lucky)
- * 本项目仅提供QNAP威联通NAS相关安装文件，Lucky二进制源文件均来自[gdy666/lucky](https://github.com/gdy666/lucky)
 
 ## Lucky项目介绍
  * Lucky 是一个高效稳定的网络工具，提供IPv6/IPv4 端口转发、Web服务、动态域名、IPv4 内网穿透、计划任务、自动证书、filebrowser等服务，自带WebUI，简单易用。
