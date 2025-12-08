@@ -4,7 +4,7 @@
  * 本软件可能会被威联通**MalwareRemover**误报为病毒软件导致无法运行，安装运行前需自行禁用**MalwareRemover**
 
 ## 安装注意
-
+ * 安装包名标有Docker标识的为支持**Docker容器管理**的Lucky版本。
  * 安装过程会提示无数字签名，若您对此有所顾虑，请使用[Docker版Lucky](https://hub.docker.com/r/gdy666/lucky)
 
 ## Lucky项目介绍
