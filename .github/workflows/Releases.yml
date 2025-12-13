@@ -57,25 +57,17 @@ jobs:
           mkdir -p /tmp/wanji-docker-arm-tmp
 
       - name: Download Lucky
-        run: |
-          # 下载解压Lucky
-          wget -O /tmp/lucky-x86-tmp/lucky-x86_64.tar.gz https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_lucky/lucky_${{ github.event.inputs.version }}_Linux_x86_64.tar.gz &
-          wget -O /tmp/lucky-arm-tmp/lucky-arm_64.tar.gz https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_lucky/lucky_${{ github.event.inputs.version }}_Linux_arm64.tar.gz &
-          
-          # 下载解压Lucky-Docker
-          wget -O /tmp/lucky-docker-x86-tmp/lucky-docker-x86_64.tar.gz https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_lucky_docker/lucky_${{ github.event.inputs.version }}_Linux_x86_64_lucky_docker.tar.gz &
-          wget -O /tmp/lucky-docker-arm-tmp/lucky-docker-arm_64.tar.gz https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_lucky_docker/lucky_${{ github.event.inputs.version }}_Linux_arm64_lucky_docker.tar.gz &
-
-          # 下载解压Wanji
-          wget -O /tmp/wanji-x86-tmp/wanji-x86_64.tar.gz https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_wanji/lucky_${{ github.event.inputs.version }}_Linux_x86_64_wanji.tar.gz &
-          wget -O /tmp/wanji-arm-tmp/wanji-arm_64.tar.gz https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_wanji/lucky_${{ github.event.inputs.version }}_Linux_arm64_wanji.tar.gz &
-
-          # 下载解压Wanji-Docker
-          wget -O /tmp/wanji-docker-x86-tmp/wanji-docker-x86_64.tar.gz https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_wanji_docker/lucky_${{ github.event.inputs.version }}_Linux_x86_64_wanji_docker.tar.gz &
-          wget -O /tmp/wanji-docker-arm-tmp/wanji-docker-arm_64.tar.gz https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_wanji_docker/lucky_${{ github.event.inputs.version }}_Linux_arm64_wanji_docker.tar.gz &
-          
-          # 等待完成下载
-          wait
+        run: |    
+          # 同步下载所有文件
+          curl --parallel --parallel-max 8 --parallel-immediate \
+            -o /tmp/lucky-x86-tmp/lucky-x86_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_lucky/lucky_${{ github.event.inputs.version }}_Linux_x86_64.tar.gz" \
+            -o /tmp/lucky-arm-tmp/lucky-arm_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_lucky/lucky_${{ github.event.inputs.version }}_Linux_arm64.tar.gz" \
+            -o /tmp/lucky-docker-x86-tmp/lucky-docker-x86_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_lucky_docker/lucky_${{ github.event.inputs.version }}_Linux_x86_64_lucky_docker.tar.gz" \
+            -o /tmp/lucky-docker-arm-tmp/lucky-docker-arm_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_lucky_docker/lucky_${{ github.event.inputs.version }}_Linux_arm64_lucky_docker.tar.gz" \
+            -o /tmp/wanji-x86-tmp/wanji-x86_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_wanji/lucky_${{ github.event.inputs.version }}_Linux_x86_64_wanji.tar.gz" \
+            -o /tmp/wanji-arm-tmp/wanji-arm_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_wanji/lucky_${{ github.event.inputs.version }}_Linux_arm64_wanji.tar.gz" \
+            -o /tmp/wanji-docker-x86-tmp/wanji-docker-x86_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_wanji_docker/lucky_${{ github.event.inputs.version }}_Linux_x86_64_wanji_docker.tar.gz" \
+            -o /tmp/wanji-docker-arm-tmp/wanji-docker-arm_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_wanji_docker/lucky_${{ github.event.inputs.version }}_Linux_arm64_wanji_docker.tar.gz"
       
       - name: Uncompress Lucky
         run: |
