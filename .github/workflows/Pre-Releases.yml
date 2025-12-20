@@ -1,0 +1,263 @@
+name: Build Lucky-Beta QPKG
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '请填写Lucky版本'
+        required: true
+        default: '2.20.0'
+      version_beta:
+        description: '请填写Beta版本'
+        required: true
+        default: 'beta1'
+      notes:
+        description: '请填写Lucky更新说明'
+        required: true
+        default: '更新日志：'
+
+jobs:
+  pull_and_package:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Clone QDK repository
+        run: |
+          git clone https://github.com/qnap-dev/QDK.git /tmp/QDK
+      
+      - name: Install QDK to Ubuntu
+        run: |
+          cd /tmp/QDK
+          sudo ./InstallToUbuntu.sh install
+          echo "/usr/share/QDK/bin" >> $GITHUB_PATH
+
+      - name: Install Rename to Ubuntu
+        run: |
+          sudo apt install rename
+
+      - name: Create Workspace Folder
+        run: |
+          # 创建成品目录
+          mkdir -p $GITHUB_WORKSPACE/Lucky-build
+
+          # 创建Lucky目录
+          mkdir -p /tmp/lucky-x86-tmp
+          mkdir -p /tmp/lucky-arm-tmp
+
+          # 创建Lucky-Docker目录
+          mkdir -p /tmp/lucky-docker-x86-tmp
+          mkdir -p /tmp/lucky-docker-arm-tmp
+
+          # 创建Wanji目录
+          mkdir -p /tmp/wanji-x86-tmp
+          mkdir -p /tmp/wanji-arm-tmp
+
+          # 创建Wanji-Docker目录
+          mkdir -p /tmp/wanji-docker-x86-tmp
+          mkdir -p /tmp/wanji-docker-arm-tmp
+
+      - name: Download Lucky
+        run: |    
+          # 同步下载所有文件
+          curl --parallel --parallel-max 8 --parallel-immediate \
+            -o /tmp/lucky-x86-tmp/lucky-x86_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}/${{ github.event.inputs.version }}_lucky/lucky_${{ github.event.inputs.version }}_Linux_x86_64.tar.gz" \
+            -o /tmp/lucky-arm-tmp/lucky-arm_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}/${{ github.event.inputs.version }}_lucky/lucky_${{ github.event.inputs.version }}_Linux_arm64.tar.gz" \
+            -o /tmp/lucky-docker-x86-tmp/lucky-docker-x86_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}/${{ github.event.inputs.version }}_lucky_docker/lucky_${{ github.event.inputs.version }}_Linux_x86_64_lucky_docker.tar.gz" \
+            -o /tmp/lucky-docker-arm-tmp/lucky-docker-arm_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}/${{ github.event.inputs.version }}_lucky_docker/lucky_${{ github.event.inputs.version }}_Linux_arm64_lucky_docker.tar.gz" \
+            -o /tmp/wanji-x86-tmp/wanji-x86_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}/${{ github.event.inputs.version }}_wanji/lucky_${{ github.event.inputs.version }}_Linux_x86_64_wanji.tar.gz" \
+            -o /tmp/wanji-arm-tmp/wanji-arm_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}/${{ github.event.inputs.version }}_wanji/lucky_${{ github.event.inputs.version }}_Linux_arm64_wanji.tar.gz" \
+            -o /tmp/wanji-docker-x86-tmp/wanji-docker-x86_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}/${{ github.event.inputs.version }}_wanji_docker/lucky_${{ github.event.inputs.version }}_Linux_x86_64_wanji_docker.tar.gz" \
+            -o /tmp/wanji-docker-arm-tmp/wanji-docker-arm_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}/${{ github.event.inputs.version }}_wanji_docker/lucky_${{ github.event.inputs.version }}_Linux_arm64_wanji_docker.tar.gz"
+      
+      - name: Uncompress Lucky
+        run: |
+          # 解压Lucky
+          cd /tmp/lucky-x86-tmp && tar -zxvf lucky-x86_64.tar.gz
+          cd /tmp/lucky-arm-tmp && tar -zxvf lucky-arm_64.tar.gz
+
+          # 解压Lucky-Docker
+          cd /tmp/lucky-docker-x86-tmp && tar -zxvf lucky-docker-x86_64.tar.gz
+          cd /tmp/lucky-docker-arm-tmp && tar -zxvf lucky-docker-arm_64.tar.gz
+
+          # 解压Wanji
+          cd /tmp/wanji-x86-tmp && tar -zxvf wanji-x86_64.tar.gz
+          cd /tmp/wanji-arm-tmp && tar -zxvf wanji-arm_64.tar.gz
+
+          # 解压Wanji-Docker
+          cd /tmp/wanji-docker-x86-tmp && tar -zxvf wanji-docker-x86_64.tar.gz
+          cd /tmp/wanji-docker-arm-tmp && tar -zxvf wanji-docker-arm_64.tar.gz
+
+      - name: Build Lucky QPKG
+        run: |
+          # 拷贝Lucky模板
+          cp -r Lucky /tmp/Lucky
+          mkdir -p /tmp/Lucky/x86_64
+          mkdir -p /tmp/Lucky/arm_64
+          mv /tmp/lucky-x86-tmp/lucky /tmp/Lucky/x86_64
+          mv /tmp/lucky-arm-tmp/lucky /tmp/Lucky/arm_64
+
+          # 创建构建配置文件
+          cat > /tmp/Lucky/qpkg.cfg << EOF
+          QPKG_NAME="Lucky"
+          QPKG_DISPLAY_NAME="Lucky"
+          QPKG_VER="${{ github.event.inputs.version }}"
+          QPKG_AUTHOR="${{ github.repository_owner }}"
+          QPKG_SUMMARY="Lucky"
+          QPKG_RC_NUM="101"
+          QPKG_SERVICE_PROGRAM="lucky.sh"
+          QPKG_WEB_PORT="16601"
+          QDK_DATA_DIR_ICONS="icons"
+          QDK_DATA_DIR_SHARED="shared"
+          EOF
+
+          # 构建QPKG
+          cd /tmp/Lucky
+          qbuild
+
+          # 拷贝QPKG到工作区
+          cp -r /tmp/Lucky/build/* $GITHUB_WORKSPACE/Lucky-build
+          ls -la $GITHUB_WORKSPACE/Lucky-build/
+
+      - name: Build Lucky-Docker QPKG
+        run: |
+          # 拷贝Lucky模板
+          cp -r Lucky /tmp/Lucky-Docker
+          mkdir -p /tmp/Lucky-Docker/x86_64
+          mkdir -p /tmp/Lucky-Docker/arm_64
+          mv /tmp/lucky-docker-x86-tmp/lucky /tmp/Lucky-Docker/x86_64
+          mv /tmp/lucky-docker-arm-tmp/lucky /tmp/Lucky-Docker/arm_64
+
+          # 创建构建配置文件
+          cat > /tmp/Lucky-Docker/qpkg.cfg << EOF
+          QPKG_NAME="Lucky"
+          QPKG_DISPLAY_NAME="Lucky-Docker"
+          QPKG_VER="${{ github.event.inputs.version }}"
+          QPKG_AUTHOR="${{ github.repository_owner }}"
+          QPKG_SUMMARY="Lucky-Docker"
+          QPKG_RC_NUM="101"
+          QPKG_SERVICE_PROGRAM="lucky.sh"
+          QPKG_WEB_PORT="16601"
+          QDK_DATA_DIR_ICONS="icons"
+          QDK_DATA_DIR_SHARED="shared"
+          EOF
+
+          # 构建QPKG
+          cd /tmp/Lucky-Docker
+          qbuild
+
+          # 重命名QPKG
+          cd /tmp/Lucky-Docker/build
+          rename -v 's/^Lucky_/Lucky_Docker_/' Lucky_*
+
+          # 拷贝QPKG到工作区
+          cp -r /tmp/Lucky-Docker/build/* $GITHUB_WORKSPACE/Lucky-build
+          ls -la $GITHUB_WORKSPACE/Lucky-build/
+
+      - name: Build Lucky.Wanji QPKG
+        run: |
+          # 拷贝Lucky模板
+          cp -r Lucky /tmp/Lucky-Wanji
+          mkdir -p /tmp/Lucky-Wanji/x86_64
+          mkdir -p /tmp/Lucky-Wanji/arm_64
+          mv /tmp/wanji-x86-tmp/lucky /tmp/Lucky-Wanji/x86_64
+          mv /tmp/wanji-arm-tmp/lucky /tmp/Lucky-Wanji/arm_64
+
+          # 创建构建配置文件
+          cat > /tmp/Lucky-Wanji/qpkg.cfg << EOF
+          QPKG_NAME="Lucky"
+          QPKG_DISPLAY_NAME="Lucky（万吉）"
+          QPKG_VER="${{ github.event.inputs.version }}"
+          QPKG_AUTHOR="${{ github.repository_owner }}"
+          QPKG_SUMMARY="Lucky（万吉）"
+          QPKG_RC_NUM="101"
+          QPKG_SERVICE_PROGRAM="lucky.sh"
+          QPKG_WEB_PORT="16601"
+          QDK_DATA_DIR_ICONS="icons"
+          QDK_DATA_DIR_SHARED="shared"
+          EOF
+
+          # 构建QPKG
+          cd /tmp/Lucky-Wanji
+          qbuild
+          
+          # 重命名QPKG
+          cd /tmp/Lucky-Wanji/build
+          rename -v 's/^Lucky_/Lucky_Wanji_/' Lucky_*
+          
+          # 拷贝QPKG到工作区
+          cp -r /tmp/Lucky-Wanji/build/* $GITHUB_WORKSPACE/Lucky-build
+          ls -la $GITHUB_WORKSPACE/Lucky-build/
+
+      - name: Build Lucky.Wanji-Docker QPKG
+        run: |
+          # 拷贝Lucky模板
+          cp -r Lucky /tmp/Lucky-Wanji-Docker
+          mkdir -p /tmp/Lucky-Wanji-Docker/x86_64
+          mkdir -p /tmp/Lucky-Wanji-Docker/arm_64
+          mv /tmp/wanji-docker-x86-tmp/lucky /tmp/Lucky-Wanji-Docker/x86_64
+          mv /tmp/wanji-docker-arm-tmp/lucky /tmp/Lucky-Wanji-Docker/arm_64
+
+          # 创建构建配置文件
+          cat > /tmp/Lucky-Wanji-Docker/qpkg.cfg << EOF
+          QPKG_NAME="Lucky"
+          QPKG_DISPLAY_NAME="Lucky（万吉Docker）"
+          QPKG_VER="${{ github.event.inputs.version }}"
+          QPKG_AUTHOR="${{ github.repository_owner }}"
+          QPKG_SUMMARY="Lucky（万吉Docker）"
+          QPKG_RC_NUM="101"
+          QPKG_SERVICE_PROGRAM="lucky.sh"
+          QPKG_WEB_PORT="16601"
+          QDK_DATA_DIR_ICONS="icons"
+          QDK_DATA_DIR_SHARED="shared"
+          EOF
+
+          # 构建QPKG
+          cd /tmp/Lucky-Wanji-Docker
+          qbuild
+          
+          # 重命名QPKG
+          cd /tmp/Lucky-Wanji-Docker/build
+          rename -v 's/^Lucky_/Lucky_Wanji_Docker_/' Lucky_*
+          
+          # 拷贝QPKG到工作区
+          cp -r /tmp/Lucky-Wanji-Docker/build/* $GITHUB_WORKSPACE/Lucky-build
+          ls -la $GITHUB_WORKSPACE/Lucky-build/
+
+      - name: Create and push tag
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git tag -a "v${{ github.event.inputs.version }}" -m "Release v${{ github.event.inputs.version }}"
+          git push origin "v${{ github.event.inputs.version }}"
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          name: Lucky QPKG v${{ github.event.inputs.version }}
+          files: Lucky-build/*
+          body: |
+            Lucky QPKG ${{ github.event.inputs.version }}
+            Built with QDK (QNAP Development Kit)
+            ## 更新说明：
+            ${{ github.event.inputs.notes }}
+            ## Build Information
+            - Version: ${{ github.event.inputs.version }}
+            - Commit: ${{ github.sha }}
+            - Build Date: ${{ github.event.repository.updated_at }}
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Upload artifacts
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Lucky-Beta-QPKG-${{ github.run_number }}
+          path: Lucky-build/*
+          retention-days: 30
