@@ -231,14 +231,14 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git tag -a "v${{ github.event.inputs.version }}" -m "Release v${{ github.event.inputs.version }}"
-          git push origin "v${{ github.event.inputs.version }}"
+          git tag -a "v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}" -m "Release v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}"
+          git push origin "v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}"
       
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ github.event.inputs.version }}
-          name: Lucky QPKG v${{ github.event.inputs.version }}
+          tag_name: v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}
+          name: Lucky QPKG v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}
           files: Lucky-build/*
           body: |
             Lucky QPKG ${{ github.event.inputs.version }}
