@@ -1,4 +1,12 @@
 #!/bin/sh
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025-2026 CyberXHN
+# Project: https://github.com/CyberXHN/Lucky-For-QNAP
+#
+# QPKG service control script for Lucky on QNAP NAS.
+# Note: the `lucky` binary itself is an unmodified third-party release,
+# see THIRD_PARTY_LICENSES/Lucky-MIT.txt.
+
 CONF=/etc/config/qpkg.conf
 QPKG_NAME="Lucky"
 QPKG_ROOT=`/sbin/getcfg $QPKG_NAME Install_Path -f ${CONF}`

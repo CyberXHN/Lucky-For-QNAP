@@ -1,4 +1,16 @@
 ######################################################################
+# package_routines
+#
+# 本文件取自 QDK（QNAP Development Kit）官方模板：
+#   https://github.com/qnap-dev/QDK — shared/template/package_routines
+#   Copyright (C) QNAP Systems, Inc.
+#   License: GNU General Public License v2 (GPLv2)
+#   https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+#
+# 仅保留其注释形式的变量与函数清单作为填写参考，不含任何实际代码实现。
+# 本仓库自研部分（含本文件之外的打包脚本与工作流）采用 MIT 许可，见 LICENSE。
+# 完整说明见仓库根目录 NOTICE 第三节。
+######################################################################
 # List of available definitions (it's not necessary to uncomment them)
 ######################################################################
 ###### Command definitions #####
