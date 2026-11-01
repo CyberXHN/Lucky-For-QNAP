@@ -23,3 +23,21 @@
     去除了一些不常用的功能，使 Lucky 变得更加轻量，非常适合在资源有限的威联通NAS上运行。
  2. 万吉（Wanji）全能版：<br>
     在Lucky基础功能上增加了 grpc反向代理支持，CorazaWAF, rclone，filebrowser，DLNA服务，CloudFlare tunnel 客户端等功能。
+
+
+## 版权与许可
+
+- **本仓库**（QPKG 打包工程）版权归 **CyberXHN** 所有，采用 [MIT License](LICENSE) 授权。
+  覆盖内容包括打包模板、配置与启动脚本、图标、构建工作流及文档。
+- **被打包分发的 Lucky / 万吉（Wanji）二进制**版权归其原作者 **gdy** 所有，
+  同样采用 MIT License，许可原文见
+  [THIRD_PARTY_LICENSES/Lucky-MIT.txt](THIRD_PARTY_LICENSES/Lucky-MIT.txt)。
+  本项目不修改其源码，二进制在构建时从官方发布源原样下载。
+- **QNAP**、**威联通** 是 QNAP Systems, Inc. 的商标。本项目为第三方非官方打包，
+  与 QNAP Systems, Inc. 及 Lucky 原作者均无隶属或合作关系，未获其赞助、授权或认可。
+- 完整的归属声明与免责条款见 [NOTICE](NOTICE)。
+
+## 免责声明
+
+本软件按「原样」提供，不作任何明示或暗示的担保。安装前需自行禁用威联通 MalwareRemover
+并允许安装未签名应用，相关风险由使用者自行承担。

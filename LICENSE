@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2022 gdy , 272288813@qq.com
+Copyright (c) 2025-2026 CyberXHN
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -19,3 +19,16 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+--------------------------------------------------------------------------
+适用范围说明 / Scope
+--------------------------------------------------------------------------
+本许可证仅覆盖本仓库自研部分，包括：
+  - QPKG 打包模板与配置文件（Lucky/qpkg.cfg、Lucky/package_routines 等）
+  - 启动与服务控制脚本（Lucky/shared/lucky.sh）
+  - 应用图标（Lucky/icons/）
+  - 自动化构建工作流（.github/workflows/）
+  - 本文档与 NOTICE 等仓库文档
+
+不包含被打包分发的第三方二进制程序 Lucky / 万吉（Wanji），
+其版权与许可见 THIRD_PARTY_LICENSES/Lucky-MIT.txt 与 NOTICE。

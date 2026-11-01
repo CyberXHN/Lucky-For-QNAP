@@ -1,0 +1,78 @@
+Lucky for QNAP NAS
+Copyright (c) 2025-2026 CyberXHN
+https://github.com/CyberXHN/Lucky-For-QNAP
+
+本项目是第三方非官方打包工程，用于将 Lucky / 万吉（Wanji）打包为
+威联通（QNAP）NAS 可用的 QPKG 安装包。
+
+
+一、本仓库自研部分
+------------------------------------------------------------------
+包括但不限于：QPKG 打包模板与配置（Lucky/）、服务控制脚本
+（Lucky/shared/lucky.sh）、应用图标（Lucky/icons/）、GitHub Actions
+构建工作流（.github/workflows/）及仓库文档。
+
+版权归 CyberXHN 所有，采用 MIT 许可证授权，详见 LICENSE 文件。
+
+
+二、第三方组件：Lucky / 万吉（Wanji）
+------------------------------------------------------------------
+  项目主页：  https://github.com/gdy666/lucky
+  官方网站：  https://lucky666.cn
+  许可协议：  MIT License
+  版权声明：  Copyright (c) 2022 gdy , 272288813@qq.com
+
+许可协议全文见 THIRD_PARTY_LICENSES/Lucky-MIT.txt。
+
+本仓库不包含、也不修改 Lucky / 万吉（Wanji）的源代码。构建过程中，
+二进制文件由 GitHub Actions 从官方发布源（https://release.66666.host）
+按官方发布版本号原样下载后打包，不做任何改动。
+
+QPKG 应用图标（Lucky/icons/*.png）由构建流程从 Lucky 官方网站
+（https://lucky666.cn）的 logo 资源自动生成（常规彩色版与灰色禁用态版），
+图标作品的版权归 Lucky 原作者所有。
+
+若上游更新其许可证，本文件与 THIRD_PARTY_LICENSES/ 目录应同步更新。
+
+
+三、构建工具：QDK（QNAP Development Kit）
+------------------------------------------------------------------
+  项目主页：  https://github.com/qnap-dev/QDK
+  许可协议：  GNU General Public License v2（GPLv2）
+  许可文本：  https://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+              （QDK 仓库内亦附带于 shared/doc/COPYING）
+
+QDK 仅作为**构建期工具**使用：本项目的 GitHub Actions 在构建机上调用 QDK
+的 qbuild 命令生成 QPKG 安装包。QDK 的代码不会被打包进 QPKG，也不会随本
+项目分发的产物一起提供给最终用户，因此 QDK 的 GPLv2 许可不延伸至本项目的
+打包工程与构建产物，本仓库自研部分仍按 MIT 授权（见 LICENSE）。
+
+例外：Lucky/package_routines 取自 QDK 官方模板
+（shared/template/package_routines），仅保留其注释形式的变量与函数清单，
+未包含任何实际代码实现。该文件按 GPLv2 随本仓库分发。
+
+
+四、商标声明
+------------------------------------------------------------------
+QNAP、威联通、QDK 是 QNAP Systems, Inc. 的商标或注册商标。
+本项目与 QNAP Systems, Inc. 无任何隶属、代理或合作关系，
+未获其赞助、授权、背书或认可。
+
+Lucky、万吉（Wanji）的名称与相关标识归其原作者所有。
+本项目仅为便于在 QNAP 设备上部署而进行的第三方打包，
+不代表 Lucky 原作者的立场或承诺。
+
+
+五、免责声明
+------------------------------------------------------------------
+本软件按「原样」（AS IS）提供，不作任何明示或暗示的担保，
+包括但不限于适销性、特定用途适用性与非侵权性的担保。
+
+安装与运行本软件可能需要关闭威联通的 MalwareRemover 并允许安装
+未经数字签名的应用，由此产生的风险由使用者自行承担。
+
+作者不对因使用或无法使用本软件所导致的任何直接、间接、 incidental、
+特殊、惩罚性或后果性损失承担责任。
+
+使用者应自行确认其行为符合所在司法辖区的法律法规，
+以及上游 Lucky 项目的许可条款与服务条款。

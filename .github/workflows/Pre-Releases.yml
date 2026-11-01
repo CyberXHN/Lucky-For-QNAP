@@ -73,6 +73,16 @@ jobs:
             -o /tmp/wanji-docker-x86-tmp/wanji-docker-x86_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}/${{ github.event.inputs.version }}_wanji_docker/lucky_${{ github.event.inputs.version }}_Linux_x86_64_wanji_docker.tar.gz" \
             -o /tmp/wanji-docker-arm-tmp/wanji-docker-arm_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}${{ github.event.inputs.version_beta }}/${{ github.event.inputs.version }}_wanji_docker/lucky_${{ github.event.inputs.version }}_Linux_arm64_wanji_docker.tar.gz"
       
+      - name: Generate QPKG icons from official logo
+        run: |
+          python3 -m pip install --quiet --user pillow
+          # 官网下载失败时沿用仓库内置图标（兜底，构建不中断）
+          if curl -fsSL --retry 3 --connect-timeout 15 -o /tmp/lucky-logo.svg "https://lucky666.cn/img/logo.svg"; then
+            python3 scripts/gen_icons.py /tmp/lucky-logo.svg "$GITHUB_WORKSPACE/Lucky/icons"
+          else
+            echo "::warning::Lucky 官网 logo 下载失败，沿用仓库内置图标"
+          fi
+
       - name: Uncompress Lucky
         run: |
           # 解压Lucky
@@ -95,6 +105,11 @@ jobs:
         run: |
           # 拷贝Lucky模板
           cp -r Lucky /tmp/Lucky
+          # 附带许可证与归属声明（随 QPKG 分发，shared/ 会随包安装到 NAS）
+          cp LICENSE /tmp/Lucky/shared/LICENSE
+          cp NOTICE /tmp/Lucky/shared/NOTICE
+          mkdir -p /tmp/Lucky/shared/third-party-licenses
+          cp THIRD_PARTY_LICENSES/*.txt /tmp/Lucky/shared/third-party-licenses/
           mkdir -p /tmp/Lucky/x86_64
           mkdir -p /tmp/Lucky/arm_64
           mv /tmp/lucky-x86-tmp/lucky /tmp/Lucky/x86_64
@@ -126,6 +141,11 @@ jobs:
         run: |
           # 拷贝Lucky模板
           cp -r Lucky /tmp/Lucky-Docker
+          # 附带许可证与归属声明（随 QPKG 分发，shared/ 会随包安装到 NAS）
+          cp LICENSE /tmp/Lucky-Docker/shared/LICENSE
+          cp NOTICE /tmp/Lucky-Docker/shared/NOTICE
+          mkdir -p /tmp/Lucky-Docker/shared/third-party-licenses
+          cp THIRD_PARTY_LICENSES/*.txt /tmp/Lucky-Docker/shared/third-party-licenses/
           mkdir -p /tmp/Lucky-Docker/x86_64
           mkdir -p /tmp/Lucky-Docker/arm_64
           mv /tmp/lucky-docker-x86-tmp/lucky /tmp/Lucky-Docker/x86_64
@@ -161,6 +181,11 @@ jobs:
         run: |
           # 拷贝Lucky模板
           cp -r Lucky /tmp/Lucky-Wanji
+          # 附带许可证与归属声明（随 QPKG 分发，shared/ 会随包安装到 NAS）
+          cp LICENSE /tmp/Lucky-Wanji/shared/LICENSE
+          cp NOTICE /tmp/Lucky-Wanji/shared/NOTICE
+          mkdir -p /tmp/Lucky-Wanji/shared/third-party-licenses
+          cp THIRD_PARTY_LICENSES/*.txt /tmp/Lucky-Wanji/shared/third-party-licenses/
           mkdir -p /tmp/Lucky-Wanji/x86_64
           mkdir -p /tmp/Lucky-Wanji/arm_64
           mv /tmp/wanji-x86-tmp/lucky /tmp/Lucky-Wanji/x86_64
@@ -196,6 +221,11 @@ jobs:
         run: |
           # 拷贝Lucky模板
           cp -r Lucky /tmp/Lucky-Wanji-Docker
+          # 附带许可证与归属声明（随 QPKG 分发，shared/ 会随包安装到 NAS）
+          cp LICENSE /tmp/Lucky-Wanji-Docker/shared/LICENSE
+          cp NOTICE /tmp/Lucky-Wanji-Docker/shared/NOTICE
+          mkdir -p /tmp/Lucky-Wanji-Docker/shared/third-party-licenses
+          cp THIRD_PARTY_LICENSES/*.txt /tmp/Lucky-Wanji-Docker/shared/third-party-licenses/
           mkdir -p /tmp/Lucky-Wanji-Docker/x86_64
           mkdir -p /tmp/Lucky-Wanji-Docker/arm_64
           mv /tmp/wanji-docker-x86-tmp/lucky /tmp/Lucky-Wanji-Docker/x86_64
