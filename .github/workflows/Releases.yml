@@ -58,8 +58,8 @@ jobs:
 
       - name: Download Lucky
         run: |    
-          # 同步下载所有文件
-          curl --parallel --parallel-max 8 --parallel-immediate \
+          # 同步下载所有文件（-f：上游 404 时快速失败，避免把错误页当包打出）
+          curl -f --parallel --parallel-max 8 --parallel-immediate \
             -o /tmp/lucky-x86-tmp/lucky-x86_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_lucky/lucky_${{ github.event.inputs.version }}_Linux_x86_64.tar.gz" \
             -o /tmp/lucky-arm-tmp/lucky-arm_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_lucky/lucky_${{ github.event.inputs.version }}_Linux_arm64.tar.gz" \
             -o /tmp/lucky-docker-x86-tmp/lucky-docker-x86_64.tar.gz "https://release.66666.host/v${{ github.event.inputs.version }}/${{ github.event.inputs.version }}_lucky_docker/lucky_${{ github.event.inputs.version }}_Linux_x86_64_lucky_docker.tar.gz" \
@@ -72,11 +72,20 @@ jobs:
       - name: Generate QPKG icons from official logo
         run: |
           python3 -m pip install --quiet --user pillow
-          # 官网下载失败时沿用仓库内置图标（兜底，构建不中断）
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36 Edg/156.0.0.0"
+          # 先用 curl 默认 UA；官网（阿里云 ESA）边缘偶发 521，失败则带浏览器 UA 重试一次
           if curl -fsSL --retry 3 --connect-timeout 15 -o /tmp/lucky-logo.svg "https://lucky666.cn/img/logo.svg"; then
-            python3 scripts/gen_icons.py /tmp/lucky-logo.svg "$GITHUB_WORKSPACE/Lucky/icons"
+            echo "logo 下载成功（curl 默认 UA）"
+          elif curl -fsSL --retry 3 --connect-timeout 15 -A "$UA" -o /tmp/lucky-logo.svg "https://lucky666.cn/img/logo.svg"; then
+            echo "logo 下载成功（浏览器 UA 重试）"
           else
-            echo "::warning::Lucky 官网 logo 下载失败，沿用仓库内置图标"
+            echo "::warning::Lucky 官网 logo 下载失败（两种 UA 均失败），沿用仓库内置图标"
+          fi
+          # 仅当文件存在且非空时才生成；生成失败也回退内置图标，构建不中断
+          if [ -s /tmp/lucky-logo.svg ] && python3 scripts/gen_icons.py /tmp/lucky-logo.svg "$GITHUB_WORKSPACE/Lucky/icons"; then
+            echo "图标生成完成"
+          else
+            echo "::warning::图标生成失败，沿用仓库内置图标"
           fi
 
       - name: Uncompress Lucky
