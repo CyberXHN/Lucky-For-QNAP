@@ -47,9 +47,9 @@ QDK 仅作为**构建期工具**使用：本项目的 GitHub Actions 在构建�
 项目分发的产物一起提供给最终用户，因此 QDK 的 GPLv2 许可不延伸至本项目的
 打包工程与构建产物，本仓库自研部分仍按 MIT 授权（见 LICENSE）。
 
-例外：Lucky/package_routines 取自 QDK 官方模板
-（shared/template/package_routines），仅保留其注释形式的变量与函数清单，
-未包含任何实际代码实现。该文件按 GPLv2 随本仓库分发。
+说明：Lucky/package_routines 为有意留空的占位文件，仅含本项目的说明注释
+（MIT，见文件内 SPDX 标识），不包含 QDK 官方模板的任何内容。QDK 仅要求
+该文件存在，NAS 端安装脚本会 source 它，纯注释无副作用。
 
 
 四、商标声明
