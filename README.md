@@ -28,11 +28,14 @@
 ## 版权与许可
 
 - **本仓库**（QPKG 打包工程）版权归 **CyberXHN** 所有，采用 [MIT License](LICENSE) 授权。
-  覆盖内容包括打包模板、配置与启动脚本、图标、构建工作流及文档。
+  覆盖内容包括打包模板、配置与启动脚本、图标生成脚本、构建工作流及文档。
 - **被打包分发的 Lucky / 万吉（Wanji）二进制**版权归其原作者 **gdy** 所有，
   同样采用 MIT License，许可原文见
   [THIRD_PARTY_LICENSES/Lucky-MIT.txt](THIRD_PARTY_LICENSES/Lucky-MIT.txt)。
   本项目不修改其源码，二进制在构建时从官方发布源原样下载。
+  QPKG 应用图标同样来自上游：由构建流程从官网 logo（https://lucky666.cn）
+  自动生成，仓库内置的兜底图标与 CI 生成版同源，图标作品版权归 Lucky
+  原作者所有，不属于本项目。
 - **QNAP**、**威联通** 是 QNAP Systems, Inc. 的商标。本项目为第三方非官方打包，
   与 QNAP Systems, Inc. 及 Lucky 原作者均无隶属或合作关系，未获其赞助、授权或认可。
 - 完整的归属声明与免责条款见 [NOTICE](NOTICE)。
