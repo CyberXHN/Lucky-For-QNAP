@@ -8,9 +8,10 @@ https://github.com/CyberXHN/Lucky-For-QNAP
 
 一、本仓库自研部分
 ------------------------------------------------------------------
-包括但不限于：QPKG 打包模板与配置（Lucky/）、服务控制脚本
-（Lucky/shared/lucky.sh）、应用图标（Lucky/icons/）、GitHub Actions
-构建工作流（.github/workflows/）及仓库文档。
+包括但不限于：QPKG 打包模板与配置（Lucky/qpkg.cfg、Lucky/package_routines）、
+服务控制脚本（Lucky/shared/lucky.sh）、GitHub Actions
+构建工作流（.github/workflows/）、图标生成脚本（scripts/gen_icons.py）
+及仓库文档。
 
 版权归 CyberXHN 所有，采用 MIT 许可证授权，详见 LICENSE 文件。
 
@@ -30,7 +31,9 @@ https://github.com/CyberXHN/Lucky-For-QNAP
 
 QPKG 应用图标（Lucky/icons/*.png）由构建流程从 Lucky 官方网站
 （https://lucky666.cn）的 logo 资源自动生成（常规彩色版与灰色禁用态版），
-图标作品的版权归 Lucky 原作者所有。
+图标作品的版权归 Lucky 原作者所有，不属于本项目自有内容。仓库内置的
+同名图标仅作为官网下载失败时的兜底，与 CI 生成版同一脚本同源生成，
+同样不是本项目的原创作品。
 
 若上游更新其许可证，本文件与 THIRD_PARTY_LICENSES/ 目录应同步更新。
 
