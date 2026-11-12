@@ -17,12 +17,22 @@
  2. 访问URL：http://[NAS-IP]:16601/
  3. 默认用户名：666 默认密码：666
 
- ## Lucky版与Wanji版区别
- 1. Lucky 轻量版 ：<br>
-    包含常用模块：如动态域名、Web 服务、端口转发、STUN 穿透、计划任务、证书管理（ACME）、网络唤醒、FTP 服务、WebDAV 服务等。<br>
-    去除了一些不常用的功能，使 Lucky 变得更加轻量，非常适合在资源有限的威联通NAS上运行。
- 2. 万吉（Wanji）全能版：<br>
-    在Lucky基础功能上增加了 grpc反向代理支持，CorazaWAF, rclone，filebrowser，DLNA服务，CloudFlare tunnel 客户端等功能。
+ ## 构建变体
+ 本项目同步 Lucky 官方的七种构建变体，每种均提供 x86_64 和 arm_64 安装包：
+
+ | 变体 | 主要模块差异 |
+ | --- | --- |
+ | XiaoJV | 轻量核心功能，不含存储、FTP、WebDAV、WAF 等模块 |
+ | XiaoJV WAF | XiaoJV + Coraza WAF + gRPC 反向代理 |
+ | Lucky | 标准版，增加存储、FTP、WebDAV、网络唤醒、Web 终端等 |
+ | Lucky Docker | Lucky + Docker 管理 |
+ | 小满 | Lucky + WAF、gRPC、DLNA、Cloudflare Tunnel、FRP、SMB |
+ | 万吉（Wanji） | 小满 + FileBrowser + Rclone |
+ | 万吉 Docker | 万吉 + Docker 管理 |
+
+ 不同变体的配置通用，可通过安装对应 QPKG 切换，实际可用功能以目标变体为准。
+ 完整的模块对照请参阅 [Lucky 官方版本模块对照](https://lucky666.cn/docs/build-variants)。
+
 
 
 ## 版权与许可
