@@ -65,9 +65,9 @@ for variant_spec in "${VARIANTS[@]}"; do
     done
 done
 
-echo "==> 并行下载全部核心（最多 8 个连接）"
-curl --fail --location --silent --show-error \
-    --parallel --parallel-immediate --parallel-max 8 \
+echo "==> 并行下载全部核心"
+curl --fail --location --show-error --progress-bar \
+    --parallel --parallel-immediate --parallel-max 16 \
     --retry 3 --connect-timeout 15 \
     "${curl_args[@]}"
 
