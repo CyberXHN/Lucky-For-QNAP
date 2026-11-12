@@ -44,6 +44,33 @@ WORK_DIR=$(mktemp -d /tmp/lucky-qpkg-build.XXXXXX)
 trap 'rm -rf "$WORK_DIR"' EXIT
 mkdir -p "$OUTPUT_DIR"
 
+curl_args=()
+for variant_spec in "${VARIANTS[@]}"; do
+    IFS='|' read -r variant _ _ <<< "$variant_spec"
+    for architecture_spec in "${ARCHITECTURES[@]}"; do
+        IFS=':' read -r qpkg_arch upstream_arch <<< "$architecture_spec"
+        download_dir="$WORK_DIR/$variant/download-$qpkg_arch"
+        mkdir -p "$download_dir"
+
+        suffix=""
+        if [[ $variant != "lucky" ]]; then
+            suffix="_$variant"
+        fi
+        archive="lucky_${CORE_VERSION}_Linux_${upstream_arch}${suffix}.tar.gz"
+        # Beta 标识只拼入最外层发布目录，核心目录和文件名始终使用 CORE_VERSION。
+        url="$RELEASE_BASE_URL/v$RELEASE_VERSION/${CORE_VERSION}_$variant/$archive"
+
+        echo "    下载 $variant/$qpkg_arch: $url"
+        curl_args+=(--output "$download_dir/core.tar.gz" "$url")
+    done
+done
+
+echo "==> 并行下载全部核心（最多 8 个连接）"
+curl --fail --location --silent --show-error \
+    --parallel --parallel-immediate --parallel-max 8 \
+    --retry 3 --connect-timeout 15 \
+    "${curl_args[@]}"
+
 for variant_spec in "${VARIANTS[@]}"; do
     IFS='|' read -r variant display_name artifact_prefix <<< "$variant_spec"
     variant_dir="$WORK_DIR/$variant"
@@ -58,24 +85,17 @@ for variant_spec in "${VARIANTS[@]}"; do
     cp "$ROOT_DIR"/THIRD_PARTY_LICENSES/*.txt "$package_dir/shared/third-party-licenses/"
 
     for architecture_spec in "${ARCHITECTURES[@]}"; do
-        IFS=':' read -r qpkg_arch upstream_arch <<< "$architecture_spec"
+        IFS=':' read -r qpkg_arch _ <<< "$architecture_spec"
         download_dir="$variant_dir/download-$qpkg_arch"
-        mkdir -p "$download_dir" "$package_dir/$qpkg_arch"
+        mkdir -p "$package_dir/$qpkg_arch"
 
-        suffix=""
-        if [[ $variant != "lucky" ]]; then
-            suffix="_$variant"
+        if [[ ! -s "$download_dir/core.tar.gz" ]]; then
+            echo "核心压缩包缺失或为空: $display_name/$qpkg_arch" >&2
+            exit 1
         fi
-        archive="lucky_${CORE_VERSION}_Linux_${upstream_arch}${suffix}.tar.gz"
-        # Beta 标识只拼入最外层发布目录，核心目录和文件名始终使用 CORE_VERSION。
-        url="$RELEASE_BASE_URL/v$RELEASE_VERSION/${CORE_VERSION}_$variant/$archive"
-
-        echo "    下载 $qpkg_arch: $url"
-        curl --fail --location --retry 3 --connect-timeout 15 \
-            --output "$download_dir/$archive" "$url"
-        tar -xzf "$download_dir/$archive" -C "$download_dir"
+        tar -xzf "$download_dir/core.tar.gz" -C "$download_dir"
         if [[ ! -f "$download_dir/lucky" ]]; then
-            echo "压缩包中缺少 lucky 核心: $url" >&2
+            echo "压缩包中缺少 lucky 核心: $display_name/$qpkg_arch" >&2
             exit 1
         fi
         install -m 0755 "$download_dir/lucky" "$package_dir/$qpkg_arch/lucky"
